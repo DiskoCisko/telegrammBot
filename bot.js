@@ -5,7 +5,7 @@ const { Telegraf, session} = require('telegraf')
 
 const { getMainMenu, yesNoKeyboard } = require('./keyboard')
 const { ADD_FILM, GET_FILMS, DELETE_FILM, RANDOME_FILM } =require('./botCommand')
-const { addFilm, getFilms } = require('./botData');
+const { addFilm, getFilms, randomeFilm } = require('./botData');
 
 
 
@@ -35,8 +35,15 @@ bot.hears(GET_FILMS, ctx => {
         ) 
     }
 })
+bot.hears(RANDOME_FILM, ctx => {
+    const films = randomeFilm()
+    console.dir(films)
+    ctx.replyWithHTML(
+           films
+        )
+})
 bot.on('text', ctx => {
-    ctx.session ??= { film: ctx.message.text }
+    ctx.session = { film: ctx.message.text }
     //ctx.session.film = ctx.message.text
     ctx.replyWithHTML(
         `Вы действительно хотите добавить фильм:\n\n`+
@@ -60,4 +67,4 @@ bot.hears('hi', (ctx) => {
     // ctx.reply('Hey there '+ ctx.state +' '+ ctx.update.message.from.first_name)
 }
     )
-bot.launch()
+bot.launch();
