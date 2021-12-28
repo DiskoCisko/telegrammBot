@@ -1,13 +1,21 @@
+
 require('dotenv').config()
 
-const { Telegraf } = require('telegraf')
+const { Telegraf} = require('telegraf')
+
+const { getMainMenu } = require('./keyboard')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
-bot.start((ctx) => ctx.reply('Welcome'))
-bot.help((ctx) => ctx.reply('Send me a sticker'))
-bot.on('sticker', (ctx) => ctx.reply('👍'))
+bot.start((ctx) => {
+    ctx.reply('Welcome', 
+    getMainMenu()
+    )
+})
 bot.hears('hi', (ctx) => {
-    console.dir(ctx.update)
-    ctx.reply('Hey there' + ctx.update.message.from.first_name)}
+    const str = 'ctx'
+    // ctx.replyWithHTML(`<input />`)
+    console.dir(str.slice(2))
+    // ctx.reply('Hey there '+ ctx.state +' '+ ctx.update.message.from.first_name)
+}
     )
 bot.launch()
