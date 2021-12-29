@@ -5,9 +5,9 @@ const { Telegraf, session} = require('telegraf')
 
 const { getMainMenu, yesNoKeyboard } = require('./keyboard')
 const { ADD_FILM, GET_FILMS, DELETE_FILM, RANDOME_FILM } =require('./botCommand')
-const { addFilm, getFilms, randomeFilm } = require('./botData');
+const { addFilm, getFilms, randomeFilm, deleteFilm } = require('./botData');
 
-
+const deleteReg = /^Удалить\s(\D*)(\s\D*)?(\s\d*)?$/;
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 bot.use(session())
@@ -42,13 +42,21 @@ bot.hears(RANDOME_FILM, ctx => {
            films
         )
 })
+
+bot.hears(DELETE_FILM, ctx => {
+getFilms()
+ ctx.replyWithHTML('Введите фразу <i>"удалить `название фильма`"</i>, чтобы удалить ,' + 'например, <b>"удалить Титаник"</b>:')
+})
+bot.hears(deleteReg , ctx => {
+ const film = ctx.message.text.slice(8)
+    deleteFilm(film)
+    ctx.reply('Фильм удалён')
+})
 bot.on('text', ctx => {
     ctx.session = { film: ctx.message.text }
-    //ctx.session.film = ctx.message.text
     ctx.replyWithHTML(
         `Вы действительно хотите добавить фильм:\n\n`+
         `<i>${ctx.message.text}</i>`,
-        //addFilm(ctx.message.text)
         yesNoKeyboard()
     )
 })
@@ -60,11 +68,4 @@ bot.action(['yes', 'no'], ctx => {
         ctx.deleteMessage()
     }
 })
-bot.hears('hi', (ctx) => {
-    const str = 'ctx'
-    // ctx.replyWithHTML(`<input />`)
-    console.dir(str.slice(2))
-    // ctx.reply('Hey there '+ ctx.state +' '+ ctx.update.message.from.first_name)
-}
-    )
 bot.launch();
